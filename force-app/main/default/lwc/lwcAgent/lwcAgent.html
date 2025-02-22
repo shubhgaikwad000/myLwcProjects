@@ -1,0 +1,44 @@
+<template>
+
+    <lightning-card  title="Search Agent">       
+            <lightning-layout multiple-rows="false" class="slds-grid slds-gutters slds-align_absolute-center">
+
+                <lightning-layout-item class="slds-col slds-size_2-of-3">
+                    <lightning-input
+                        name="Text here"
+                        label="Search when user hits the 'enter' key"
+                        type="search"
+                        onchange={handleNameChange}
+                        value={searchName}
+                        class="slds-m-left_x-small"
+                    ></lightning-input>  
+                </lightning-layout-item>
+
+                <lightning-layout-item class ="slds-col slds-size_1-of-3" >
+                    <lightning-button 
+                        variant="brand" 
+                        label="Search Agent" 
+                        onclick={handleClick}
+                        lass="slds-m-left_x-small slds-m-top_x-large"></lightning-button>
+                    </lightning-layout-item>
+            </lightning-layout>
+    </lightning-card>
+
+
+    <lightning-card title="Agent Search Results">
+
+            <template if:true={records}>
+                <lightning-datatable 
+                    key-field="Id" 
+                    data={records} 
+                    columns={columns}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+
+            <template if:true={error}>
+                <p class="slds-text-color_error">{error}</p>
+            </template>
+    </lightning-card>
+
+</template>

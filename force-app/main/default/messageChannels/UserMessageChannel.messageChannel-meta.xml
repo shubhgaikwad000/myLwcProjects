@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata" fqn="UserMessageChannel">
+
+    <isExposed>true</isExposed>
+    <masterLabel>UserMessageChannel</masterLabel>
+    <description>Message channel for simple data passing</description>
+    <lightningMessageFields>
+        <fieldName>name</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>email</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>phone</fieldName>
+    </lightningMessageFields>
+
+
+</LightningMessageChannel>
