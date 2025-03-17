@@ -1,11 +1,12 @@
-import { LightningElement, wire } from 'lwc';
-import { subscribe, MessageContext } from 'lightning/messageService';
+import { LightningElement, wire, track } from 'lwc';
+import { subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
 import UserMessageChannel from '@salesforce/messageChannel/UserMessageChannel__c';
 
 export default class UserDetailsPage extends LightningElement {
-    name;
-    email;
-    phone;
+    @track userName = ''; // Changed name to userName
+    @track userEmail = ''; // Changed email to userEmail
+    @track userPhone = ''; // Changed phone to userPhone
+    subscription = null; // Store the subscription reference
 
     @wire(MessageContext)
     messageContext;
@@ -16,36 +17,52 @@ export default class UserDetailsPage extends LightningElement {
     }
 
     subscribeToMessageChannel() {
-        subscribe(this.messageContext, UserMessageChannel, (message) => {
-            this.handleMessage(message);
-        });
+        if (!this.subscription) {  // Avoid duplicate subscriptions
+            this.subscription = subscribe(this.messageContext, UserMessageChannel, (message) => {
+                this.handleMessage(message);
+            });
+        }
     }
 
     handleMessage(message) {
-        this.name = message?.name || '';
-        this.email = message?.email || '';
-        this.phone = message?.phone || '';
+        this.userName = message?.name || ''; // Updated to userName
+        this.userEmail = message?.email || ''; // Updated to userEmail
+        this.userPhone = message?.phone || ''; // Updated to userPhone
 
-        // Store data in sessionStorage
-        const userDetails = {
-            name: this.name,
-            email: this.email,
-            phone: this.phone
-        };
-
-        sessionStorage.setItem('userDetails', JSON.stringify(userDetails));
+        this.storeDataInSession(); // Store the updated data
     }
 
     loadStoredData() {
-        // Retrieve data from sessionStorage
-        const storedData = sessionStorage.getItem('userDetails');
+        try {
+            const storedData = sessionStorage.getItem('userDetails');
+            if (storedData) {
+                const userDetails = JSON.parse(storedData);
+                this.userName = userDetails?.name || ''; // Updated to userName
+                this.userEmail = userDetails?.email || ''; // Updated to userEmail
+                this.userPhone = userDetails?.phone || ''; // Updated to userPhone
+            }
+        } catch (error) {
+            console.error('Error loading sessionStorage data:', error);
+        }
+    }
 
-        if (storedData) {
-            const userDetails = JSON.parse(storedData);
-            
-            this.name = userDetails?.name || '';
-            this.email = userDetails?.email || '';
-            this.phone = userDetails?.phone || '';
+    storeDataInSession() {
+        try {
+            const userDetails = {
+                name: this.userName, // Updated to userName
+                email: this.userEmail, // Updated to userEmail
+                phone: this.userPhone // Updated to userPhone
+            };
+            sessionStorage.setItem('userDetails', JSON.stringify(userDetails));
+        } catch (error) {
+            console.error('Error saving to sessionStorage:', error);
+        }
+    }
+
+    disconnectedCallback() {
+        if (this.subscription) {
+            unsubscribe(this.subscription);
+            this.subscription = null;
         }
     }
 }

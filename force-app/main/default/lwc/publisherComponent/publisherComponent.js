@@ -1,4 +1,4 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, wire } from 'lwc';
 import { publish, MessageContext } from 'lightning/messageService';
 import SIMPLE_MESSAGE_CHANNEL from '@salesforce/messageChannel/simpleMessageChannel__c';
 
